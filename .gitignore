@@ -1,0 +1,31 @@
+# Assignment documents and reports
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+
+# Submission archives
+*.7z
+*.zip
+*.tar
+*.gz
+*.rar
+
+# Compiled output
+*.o
+*.obj
+*.exe
+*.out
+*.elf
+/build/
+/期中/main
+/期末/test
+
+# Local editor and OS files
+.vs/
+*.swp
+*.bak
+Thumbs.db
+.DS_Store
+*.lnk
