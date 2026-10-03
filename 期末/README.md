@@ -16,7 +16,7 @@
 
 | 檔案 | 用途 |
 | --- | --- |
-| `main.c` | 主流程、動畫參數、影像緩衝區，以及 `/dev/fb0` 的開啟、寫入與關閉 |
+| `main.c` | 主流程、動畫參數、影像緩衝區 |
 | `name.s` | 輸出隊伍及姓名，並提供 C 程式使用的姓名字串 |
 | `id.s` | ID 輸入、加總與輸出，並提供 `ids`、`idsum` |
 | `drawJuliaSet.s` | `drawJuliaSet` 函式，計算各像素的迭代結果並寫入影像緩衝區 |
@@ -44,7 +44,6 @@ next_zy = (2 * zx * zy) / 1000 + cY
 ## 執行環境
 
 - 32 位元 ARM Linux，搭配 GCC 與 C 標準函式庫。
-- 裝置提供 `/dev/fb0`，且執行帳號具備讀寫權限。
 - framebuffer 須與 640 × 480、16 位元像素、每列 1280 bytes 的配置相容。
 
 程式直接寫入 framebuffer，不會建立桌面視窗，也未自動查詢或設定螢幕格式。僅有終端機的環境若沒有相容的 framebuffer，便無法顯示動畫。
@@ -54,17 +53,16 @@ next_zy = (2 * zx * zy) / 1000 + cY
 在目標 ARM Linux 環境，從本資料夾執行：
 
 ```sh
-gcc -marm -no-pie -include unistd.h -o test main.c name.s id.s drawJuliaSet.s
+gcc -include unistd.h -o test main.c name.s id.s drawJuliaSet.s
 ./test
 ```
 
-`-marm` 指定 ARM 指令模式；`-no-pie` 避免以位置獨立執行檔模式連結。原始 `main.c` 使用 `write`、`lseek`、`close`，但未引入 `<unistd.h>`；此處以 `-include unistd.h` 在編譯時補入宣告，保留原始碼不變。編譯範例尚未在目標 ARM 裝置驗證。
+原始 `main.c` 使用 `write`、`lseek`、`close`，但未引入 `<unistd.h>`；此處以 `-include unistd.h` 在編譯時補入宣告，保留原始碼不變。編譯範例尚未在目標 ARM 裝置驗證。
 
 ## 使用限制
 
 - framebuffer 無法開啟時，程式會顯示 `Frame Buffer Device Open Error!!`，之後仍需輸入 `p` 才會結束。
 - 原始碼未處理短寫入、顯示格式不符或非整數 ID 等情況。
 - 繪圖函式內固定使用 640 像素的列寬；若調整畫面尺寸，需同步檢查 C 與組合語言的記憶體配置。
-- 本版本保留課程實作，暫存器保存與堆疊對齊仍需在目標環境確認。
 
 [返回專案總覽](../README.md)
